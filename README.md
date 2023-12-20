@@ -17,7 +17,8 @@ This is a prototype deployment of an I2P testnet using i2pd on k3s. As both i2p.
 
 ## Setup K3S
 
-### Single-node k3s cluster with calico
+### Single-node K3S Cluster with Calico
+> for an up-to-date version check the calico docs: https://docs.tigera.io/calico/latest/getting-started/kubernetes/k3s/quickstart
 
 ```bash
 # k3s install without default flannel
@@ -30,12 +31,11 @@ chmod 600 ~/.kube/config
 export KUBECONFIG=~/.kube/config
 echo "export KUBECONFIG=~/.kube/config" >> .bashrc
 
-# Show k3s nodes
+# show k3s nodes
 # you should see one k3s node with the status "READY"
 kubectl get nodes -o wide 
 
 # install calico
-# for an up-to-date version check: https://docs.tigera.io/calico/latest/getting-started/kubernetes/k3s/quickstart
 #
 kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.27.0/manifests/tigera-operator.yaml
 kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.27.0/manifests/custom-resources.yaml
@@ -76,9 +76,10 @@ calicoctl get ippools
 
 # Setup Test Network
 
-The setup consists of three steps. At first we deploy our i2pd routers without reesed information via `helm install`. During the install we have to set a podAnnition for calico to assign a static IP address to the i2pd pods.
-Once all pods have been started and are ready we can then copy the newly generated router.info files from each of the pods, zip them and save them as `seed.zip` in the local directory.
-After the zipfile has been generated we need to kill all containers and upgrade the deployment via `helm upgrade`.
+The setup consists of three steps. 
+- At first we deploy our i2pd routers without reesed information via `helm install`. During the install we have to set a podAnnition for calico to assign a static IP address to the i2pd pods.
+- Once all pods have been started and are ready we can then copy the newly generated router.info files from each of the pods, zip them and save them as `seed.zip` in the local directory.
+- After the zipfile has been generated we need to kill all containers and upgrade the deployment via `helm upgrade`.
 The `seed.zip` is automatically mounted via a configmap to all pods.
 
 See [setup.sh](,/helm/i2pd-chart/setup.sh) f

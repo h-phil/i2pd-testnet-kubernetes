@@ -1,0 +1,17 @@
+{{- if .Values.httpproxy.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "i2pd-chart.fullname" . }}-httpproxy
+  labels:
+    {{- include "i2pd-chart.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.httpproxy.service.type }}
+  ports:
+    - port: {{ .Values.httpproxy.service.port }}
+      targetPort: 4444
+      protocol: TCP
+      name: httpproxy
+  selector:
+    {{- include "i2pd-chart.selectorLabels" . | nindent 4 }}
+{{- end }}

@@ -1,0 +1,17 @@
+{{- if .Values.socksproxy.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "i2pd-chart.fullname" . }}-socksproxy
+  labels:
+    {{- include "i2pd-chart.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.socksproxy.service.type }}
+  ports:
+    - port: {{ .Values.socksproxy.service.port }}
+      targetPort: 4447
+      protocol: TCP
+      name: socksproxy
+  selector:
+    {{- include "i2pd-chart.selectorLabels" . | nindent 4 }}
+{{- end }}

@@ -1,0 +1,19 @@
+{{- if .Values.i2pd.tunnels.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-tunnels
+data:
+  tunnels.conf: |-
+      {{- range .Values.i2pd.tunnels.configs}}
+      [{{ .name }}]
+      type = {{ .type }}
+      {{- if  .hostFromService}}
+      host = {{ $.Release.Name}}-{{ .hostFromService }}
+      {{- else }}
+      host = {{ .host }}
+      {{- end }}
+      port = {{ .port }}
+      keys = {{ .keys }}
+      {{- end}}
+{{- end }}

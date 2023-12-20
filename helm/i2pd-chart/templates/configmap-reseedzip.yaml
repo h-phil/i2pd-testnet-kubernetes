@@ -1,0 +1,9 @@
+{{- if .Values.i2pd.reseed.zipfile.enabled }}
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ .Release.Name }}-reseedzip
+data:
+  seed.zip: |-
+      {{ .Files.Get "seed.zip" | b64enc }}
+{{- end }}

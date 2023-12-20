@@ -1,0 +1,95 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "i2pd-chart.fullname" . }}
+  labels:
+    {{- include "i2pd-chart.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "i2pd-chart.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "i2pd-chart.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "i2pd-chart.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: console
+              containerPort: 7070
+              protocol: TCP
+            - name: i2pcontrol
+              containerPort: 7650
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 7070
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 7070
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - name: i2pd-conf
+              mountPath: /home/i2pd/data/i2pd.conf
+              subPath: i2pd.conf
+          {{- if .Values.i2pd.tunnels.enabled }}
+            - name: tunnels
+              mountPath: /home/i2pd/data/tunnels.conf
+              subPath: tunnels.conf
+          {{- end }}
+          {{- if .Values.i2pd.reseed.zipfile.enabled }}
+            - name: i2pd-seed
+              mountPath: /home/i2pd/data/seed.zip
+              subPath: seed.zip
+          {{- end }}
+            - name: i2pd-data
+              mountPath: /home/i2pd/data
+      volumes:
+        - name: i2pd-data
+          persistentVolumeClaim:
+            claimName: {{ include "i2pd-chart.fullname" . }}-data
+        - name: i2pd-conf
+          configMap:
+            name: {{ .Release.Name }}-i2pdconf
+      {{- if .Values.i2pd.tunnels.enabled }}
+        - name: tunnels
+          configMap:
+            name: {{ .Release.Name }}-tunnels
+      {{- end }}
+      {{- if .Values.i2pd.reseed.zipfile.enabled }}
+        - name: i2pd-seed
+          secret:
+            secretName: {{ .Release.Name }}-reseedzip
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

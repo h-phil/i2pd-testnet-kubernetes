@@ -1,0 +1,17 @@
+{{- if .Values.i2pcontrol.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "i2pd-chart.fullname" . }}-i2pcontrol
+  labels:
+    {{- include "i2pd-chart.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.i2pcontrol.service.type }}
+  ports:
+    - port: {{ .Values.i2pcontrol.service.port }}
+      targetPort: 7650
+      protocol: TCP
+      name: i2pcontrol
+  selector:
+    {{- include "i2pd-chart.selectorLabels" . | nindent 4 }}
+{{- end }}

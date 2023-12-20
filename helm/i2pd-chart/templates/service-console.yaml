@@ -1,0 +1,17 @@
+{{- if .Values.console.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "i2pd-chart.fullname" . }}-console
+  labels:
+    {{- include "i2pd-chart.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.console.service.type }}
+  ports:
+    - port: {{ .Values.console.service.port }}
+      targetPort: 7070
+      protocol: TCP
+      name: console
+  selector:
+    {{- include "i2pd-chart.selectorLabels" . | nindent 4 }}
+{{- end }}

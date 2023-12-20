@@ -1,0 +1,17 @@
+{{- if .Values.sam.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "i2pd-chart.fullname" . }}-sam
+  labels:
+    {{- include "i2pd-chart.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.sam.service.type }}
+  ports:
+    - port: {{ .Values.sam.service.port }}
+      targetPort: 7656
+      protocol: TCP
+      name: sam
+  selector:
+    {{- include "i2pd-chart.selectorLabels" . | nindent 4 }}
+{{- end }}

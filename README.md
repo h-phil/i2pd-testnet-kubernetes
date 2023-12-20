@@ -77,12 +77,14 @@ calicoctl get ippools
 # Setup Test Network
 
 The setup consists of three steps. 
-- At first we deploy our i2pd routers without reesed information via `helm install`. During the install we have to set a podAnnition for calico to assign a static IP address to the i2pd pods.
-- Once all pods have been started and are ready we can then copy the newly generated router.info files from each of the pods, zip them and save them as `seed.zip` in the local directory.
+- At first we deploy our i2pd routers without reesed information via `helm install`. During the install we have to set a podAnnotation for calico to assign a static IP address to the i2pd pods.
+- Once all pods have been started and are ready, we can copy the newly generated router.info files from each of the pods, zip them and save them as `seed.zip` in the local directory.
 - After the zipfile has been generated we need to kill all containers and upgrade the deployment via `helm upgrade`.
 The `seed.zip` is automatically mounted via a configmap to all pods.
 
-See [setup.sh](,/helm/i2pd-chart/setup.sh) f
+See [setup.sh](,/helm/i2pd-chart/setup.sh)
+
+## Usage 
 
 ```bash
 cd helm/i2pd-chart

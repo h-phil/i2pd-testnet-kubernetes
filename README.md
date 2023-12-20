@@ -17,11 +17,7 @@ This is a prototype deployment of an I2P testnet using i2pd on k3s. As both i2p.
 
 ## Setup K3S
 
-Quick start single-node k3s cluster
-
 ### Single-node k3s cluster with calico
-
-> see calico doc: https://docs.tigera.io/calico/latest/getting-started/kubernetes/k3s/quickstart
 
 ```bash
 # k3s install without default flannel
@@ -35,8 +31,17 @@ export KUBECONFIG=~/.kube/config
 echo "export KUBECONFIG=~/.kube/config" >> .bashrc
 
 # Show k3s nodes
-kubectl get nodes -o wide 
 # you should see one k3s node with the status "READY"
+kubectl get nodes -o wide 
+
+# install calico
+# for an up-to-date version check: https://docs.tigera.io/calico/latest/getting-started/kubernetes/k3s/quickstart
+#
+kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.27.0/manifests/tigera-operator.yaml
+kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.27.0/manifests/custom-resources.yaml
+
+# wait until all pods are ready
+watch kubectl get pods --all-namespaces
 ```
 
 ### Configure Calico IP pool

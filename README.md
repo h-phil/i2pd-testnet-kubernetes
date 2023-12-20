@@ -5,7 +5,7 @@ This is a prototype deployment of an I2P testnet using i2pd on k3s. As both i2p.
 ## Prerequisites
 
 1. GNU/Linux system for our k3s cluster 
-  - 4 Cores and 8 GB RAM or more are recommended
+  - 4 Cores and 8 GB RAM or more are recommended (depending how many routers you want to deploy)
   - for further information see k3s requirements: https://docs.k3s.io/installation/requirements
   - system needs internet connectivity for the initial setup and for kubernetes to pull the i2pd container images
   - I do not recommend to expose this node directly to the internet!
@@ -17,7 +17,10 @@ This is a prototype deployment of an I2P testnet using i2pd on k3s. As both i2p.
 
 ## Setup K3S
 
+Quick start single-node k3s cluster
+
 ### Single-node k3s cluster with calico
+
 > see calico doc: https://docs.tigera.io/calico/latest/getting-started/kubernetes/k3s/quickstart
 
 ```bash
@@ -38,7 +41,7 @@ kubectl get nodes -o wide
 
 ### Configure Calico IP pool
 
-As mentioned above we need make the I2P routers think have a public IP.
+As mentioned above we need to make the I2P routers think they have a public IP.
 For this we use calico to create a custom ip pool.
 
 Config:
@@ -67,6 +70,13 @@ calicoctl get ippools
 ```
 
 # Setup Test Network
+
+The setup consists of three steps. At first we deploy our i2pd routers without reesed information via `helm install`. During the install we have to set a podAnnition for calico to assign a static IP address to the i2pd pods.
+Once all pods have been started and are ready we can then copy the newly generated router.info files from each of the pods, zip them and save them as `seed.zip` in the local directory.
+After the zipfile has been generated we need to kill all containers and upgrade the deployment via `helm upgrade`.
+The `seed.zip` is automatically mounted via a configmap to all pods.
+
+See [setup.sh](,/helm/i2pd-chart/setup.sh) f
 
 ```bash
 cd helm/i2pd-chart

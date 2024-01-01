@@ -130,6 +130,14 @@ See the helm values.yaml [here](./helm/i2pd-chart/values.yaml)
 Disabling it still causes issues with reseeding and tunnel creation.
 Unclear what the exact impact of the [reserverange](https://github.com/PurpleI2P/i2pd/blob/fb420bb563a3ebf8803faaa390ba6b2bb840d872/daemon/Daemon.cpp#L301C49-L301C62) option is.
 
+## How can I capture I2P-Traffic?
+
+You can do a simple `tcpdump` on the k3s node.
+
+```bash
+k3s-node$ sudo tcpdump -nnni any net "123.8.0.0/16" -w traffic.pcap
+```
+
 # Other links/resources
 
 Some other test networks that use a similar concept but didn't work for me:

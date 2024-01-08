@@ -84,7 +84,7 @@ The setup consists of three steps.
 - After the zipfile has been generated we need to kill all containers and upgrade the deployment via `helm upgrade`.
 The `seed.zip` is automatically mounted via a configmap to all pods.
 
-See [setup.sh](,/helm/i2pd-chart/setup.sh)
+See [setup.sh](/helm/i2pd-chart/setup.sh)
 
 ## Usage 
 

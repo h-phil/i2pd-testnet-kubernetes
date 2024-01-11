@@ -1,0 +1,9 @@
+{{- if .Values.trafficControl.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-tc-init
+data:
+  tc-init.sh: |-
+   {{ .Values.trafficControl.init | nindent 4 }}
+{{- end }}

@@ -5,5 +5,5 @@ metadata:
   name: {{ .Release.Name }}-reseedzip
 data:
   seed.zip: |-
-      {{ .Files.Get "seed.zip" | b64enc }}
+      {{ .Files.Get "seed.zip" | default "" | b64enc }}
 {{- end }}

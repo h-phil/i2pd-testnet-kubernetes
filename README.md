@@ -140,6 +140,28 @@ You can do a simple `tcpdump` on the k3s node.
 k3s-node$ sudo tcpdump -nnni any net "123.8.0.0/16" -w traffic.pcap
 ```
 
+## How can I change the network latency / packet loss between the i2pd routers?
+
+You can change the network latency and packet loss in the [values.yaml](./helm/i2pd-chart/values.yaml).
+The `tc` command is run in every pod before the i2pd container is started.
+
+```yaml
+trafficControl:
+  enabled: true
+  image:
+    # see https://github.com/h-phil/alpine-iproute2
+    repository: hphil/alpine-iproute2
+    tag: latest
+  init: |
+    #!/bin/sh
+    set -ex
+    # delay of 40+-20ms (normal distribution) per pod
+    # 0.1% loss with higher successive probablity (packet burst lossess)
+    tc qdisc add dev eth0 root netem delay 40ms 20ms distribution normal loss 0.1% 25%
+```
+
+You can disable this if you set `enabled` to `false`.
+
 # Other links/resources
 
 Some other test networks that use a similar concept but didn't work for me:

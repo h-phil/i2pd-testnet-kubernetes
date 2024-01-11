@@ -25,6 +25,20 @@ spec:
       serviceAccountName: {{ include "i2pd-chart.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      {{- if .Values.trafficControl.enabled }}
+      initContainers:
+        - name: tc
+          image: "{{ .Values.trafficControl.image.repository }}:{{ .Values.trafficControl.image.tag }}"
+          command: ["sh", "-c", "/tc-init.sh"]
+          volumeMounts:
+            - name: tc-init
+              mountPath: /tc-init.sh
+              subPath: tc-init.sh
+          securityContext:
+            capabilities:
+              add:
+              - NET_ADMIN # we need NET_ADMIN for tc
+      {{- end }}
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
@@ -80,6 +94,12 @@ spec:
         - name: i2pd-seed
           secret:
             secretName: {{ .Release.Name }}-reseedzip
+      {{- end }}
+      {{- if .Values.trafficControl.enabled }}
+        - name: tc-init
+          configMap:
+            name: {{ .Release.Name }}-tc-init
+            defaultMode: 0755
       {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:

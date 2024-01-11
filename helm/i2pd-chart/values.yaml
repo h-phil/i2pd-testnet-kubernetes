@@ -96,6 +96,18 @@ i2pd:
     #outbound.length = 0
     #outbound.quantity = 1
 
+trafficControl:
+  enabled: true
+  image:
+    # see https://github.com/h-phil/alpine-iproute2
+    repository: hphil/alpine-iproute2
+    tag: latest
+  init: |
+    #!/bin/sh
+    set -ex
+    # delay of 40+-20ms (normal distribution) per pod
+    # 0.1% loss with higher successive probablity (packet burst lossess)
+    tc qdisc add dev eth0 root netem delay 40ms 20ms distribution normal loss 0.1% 25%
 
 imagePullSecrets: []
 nameOverride: ""

@@ -16,6 +16,7 @@ This is a prototype deployment of an I2P test network using i2pd on k3s. As both
   - Install `kubectl` (https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/)
   - Install `helm` (https://helm.sh/docs/intro/install/)
   - Install `calicoctl` (https://docs.tigera.io/calico/latest/operations/calicoctl/install)
+  - Make sure you have `zip` installed (needed for the setup scripts)
 
 ## Setup K3S
 

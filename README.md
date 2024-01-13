@@ -1,6 +1,6 @@
 # I2PD Test Network in Kubernetes
 
-![Traffic](./traffic.png)
+![Traffic](./img/traffic.png)
 
 This is a prototype deployment of an I2P test network using i2pd on k3s. As both i2p.i2p and i2pd prevent routers from talking to private range IPs, we need calico to assign static IPs to containers.
 
@@ -89,8 +89,10 @@ See [setup.sh](/helm/i2pd-chart/setup.sh)
 ## Usage 
 
 ```bash
-cd helm/i2pd-chart
-./setup.sh
+git clone https://github.com/h-phil/i2pd-testnet-kubernetes.git
+cd i2pd-testnet-kubernetes
+
+./setup-i2pd.sh
 ```
 
 # FAQ

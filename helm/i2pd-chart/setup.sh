@@ -10,7 +10,7 @@ routerinfo_path="/home/i2pd/data/router.info"
 kubectl delete namespace $ns --ignore-not-found=true
 
 # deploy helm chart with calico annotation
-for i in $(seq $nodes); do helm install i2pd-$i -f values.yaml --create-namespace --namespace $ns --set "podAnnotations.cni\.projectcalico\.org/ipAddrs"="[\"123.8.0.$(($i+1))\"]" ./; done
+for i in $(seq $nodes); do helm install i2pd-$i -f values.yaml --create-namespace --namespace $ns --set "podAnnotations.cni\.projectcalico\.org/ipAddrs"="[\"10.8.0.$(($i+1))\"]" ./; done
 
 # wait for all i2pd pods to be ready
 kubectl wait pods -n $ns -l $selector --for condition=Ready --timeout=120s
@@ -39,5 +39,5 @@ cp tmp/seed.zip ./
 kubectl -n $ns delete pods,deployments,replicasets --all
 
 # deploy again
-for i in $(seq $nodes); do helm upgrade i2pd-$i -f values.yaml --create-namespace --namespace $ns --set "podAnnotations.cni\.projectcalico\.org/ipAddrs"="[\"123.8.0.$(($i+1))\"]" ./; done
+for i in $(seq $nodes); do helm upgrade i2pd-$i -f values.yaml --create-namespace --namespace $ns --set "podAnnotations.cni\.projectcalico\.org/ipAddrs"="[\"10.8.0.$(($i+1))\"]" ./; done
 

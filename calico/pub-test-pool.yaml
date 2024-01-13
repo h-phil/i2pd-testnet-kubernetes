@@ -1,9 +1,9 @@
 apiVersion: projectcalico.org/v3
 kind: IPPool
 metadata:
-  name: test-pool
+  name: public-test-pool
 spec:
-  cidr: 10.8.0.0/16
+  cidr: 123.8.0.0/16
   natOutgoing: true
   disabled: false
   nodeSelector: "!all()"

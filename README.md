@@ -2,13 +2,14 @@
 
 ![Traffic](./traffic.png)
 
-This is a prototype deployment of an I2P test network using i2pd on k3s. As both i2p.i2p and i2pd prevent routers from talking to private range IPs, we need calico to assign static IPs to containers.
+This is a prototype deployment of an I2P test network using i2pd on k3s. 
+To properly reseed the routers, calico with static IPs is used as CNI.
 
 ## Prerequisites
 
 1. GNU/Linux system for our k3s cluster 
   - 4 Cores and 8 GB RAM or more are recommended (depending on how many routers you want to deploy)
-  - system needs internet connectivity for the initial setup and for kubernetes to pull the i2pd container images
+  - system needs internet connectivity for the initial setup and for Kubernetes to pull the i2pd container images
   - I do not recommend to expose this node directly to the internet!
   - For further information see the k3s requirements: https://docs.k3s.io/installation/requirements
 
@@ -48,8 +49,8 @@ watch kubectl get pods --all-namespaces
 
 ### Configure Calico IP pool
 
-As mentioned above we need to make the I2P routers think they have a public IP.
-For this we use calico to create a custom IP pool.
+To assign static IPs to our routers we need to create a calico `IPPool`.
+In this case we use a `nodeSelector` that matches nothing per default and we have to manually assign the IPs using a `podAnnotation`. (see [setup.sh](/helm/i2pd-chart/setup.sh))
 
 Config:
 
@@ -58,9 +59,9 @@ Config:
 apiVersion: projectcalico.org/v3
 kind: IPPool
 metadata:
-  name: public-test-pool
+  name: test-pool
 spec:
-  cidr: 123.8.0.0/16
+  cidr: 10.8.0.0/16
   natOutgoing: true
   disabled: false
   nodeSelector: "!all()"
@@ -125,12 +126,6 @@ image:
 ```
 
 See the helm values.yaml [here](./helm/i2pd-chart/values.yaml)
-
-
-## Why did you not disable the i2pd `reservedrange` check?
-
-Disabling it still causes issues with reseeding and tunnel creation.
-Unclear what the exact impact of the [reserverange](https://github.com/PurpleI2P/i2pd/blob/fb420bb563a3ebf8803faaa390ba6b2bb840d872/daemon/Daemon.cpp#L301C49-L301C62) option is.
 
 ## How can I capture I2P-Traffic?
 

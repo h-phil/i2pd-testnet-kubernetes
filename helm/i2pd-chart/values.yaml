@@ -7,6 +7,7 @@ replicaCount: 1
 image:
   repository: purplei2p/i2pd
   pullPolicy: IfNotPresent
+  #pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
   tag: latest
 
@@ -35,7 +36,8 @@ i2pd:
     # https://geti2p.net/spec/proposals/147-transport-network-id-check
     netid = 32
     # do not check if ip is in reserved range
-    #reservedrange = false
+    # working after https://github.com/PurpleI2P/i2pd/commit/d724948d031dbd4fe05f106c0b07a1c58b007987
+    reservedrange = false
     # router floodfill
     floodfill = true
     # interface to bind to

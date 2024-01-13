@@ -165,6 +165,12 @@ trafficControl:
 
 You can disable this if you set `enabled` to `false`.
 
+# Ideas / Improvements
+
+- use ingress service type for router consoles
+- add Kubernetes resource limits to the i2p pods
+- better align with helm best practices (`trivy config ./`)
+
 # Other links/resources
 
 Some other test networks that use a similar concept but didn't work for me:

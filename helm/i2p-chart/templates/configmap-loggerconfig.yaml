@@ -1,0 +1,9 @@
+{{- if .Values.i2p.loggerconfig.enabled -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-logger-config
+data:
+  logger.config: |-
+      {{- .Files.Get .Values.i2p.loggerconfig.path | nindent 4 }}
+{{- end -}}

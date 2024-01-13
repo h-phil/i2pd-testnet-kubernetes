@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-eepsite
+data:
+  index.html: |-
+    testing
+    hello from {{ .Release.name }}
+

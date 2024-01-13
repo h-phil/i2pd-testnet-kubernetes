@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "i2p-chart.fullname" . }}-console
+  labels:
+    component: console
+    {{- include "i2p-chart.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: 7657
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "i2p-chart.selectorLabels" . | nindent 4 }}

@@ -1,0 +1,70 @@
+{{- if .Values.i2p.routerconfig.enabled -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-router-config
+data:
+  router.config: |-
+    i2p.dir.base=/i2p
+    i2p.dir.config=/i2p/.i2p
+    # this disables the private IP range checks and a whole
+    # bunch of other stuff to make testnet work better
+    # recommended even if you're using public IPs
+    i2np.allowLocal=true
+    # adjust as necessary
+    i2np.bandwidth.inboundBurstKBytes=1953105
+    i2np.bandwidth.inboundBurstKBytesPerSecond=97655
+    i2np.bandwidth.inboundKBytesPerSecond=97605
+    i2np.bandwidth.outboundBurstKBytes=1953105
+    i2np.bandwidth.outboundBurstKBytesPerSecond=97655
+    i2np.bandwidth.outboundKBytesPerSecond=97605
+    # you can set some routers to true to test firewalled
+    i2np.ipv4.firewalled=false
+    i2np.ipv6.firewalled=false
+    i2np.lastIPv6Firewalled=false
+    i2np.upnp.enable=false
+    i2np.udp.ipv6=disable
+    i2np.ntcp.ipv6=disable
+    # allow everything readable by everybody
+    i2p.insecureFiles=true
+    # just point it to nowhere
+    i2p.reseedURL=https://localhost:3333/foo
+    # disable IP blocking
+    router.blocklist.enable=false
+    # set some to true and some to false so you have floodfills right away
+    router.floodfillParticipant=true
+    # prevent leakage to real network
+    router.networkID=32
+    # disable auto update
+    router.updateDisabled=true
+    # prevent RI rekey after a long downtime
+    router.rebuildKeys=false
+    # accept tunnels right away
+    router.rejectStartupTime=20000
+    router.reseedDisable=true
+    router.sharePercentage=80
+    router.sybilFrequency=0
+    routerconsole.advanced=true
+    # no welcome wizard
+    routerconsole.welcomeWizardComplete=true
+    routerconsole.lang=en
+    routerconsole.theme=dark
+    router.newsRefreshFrequency=0
+    # NTP
+    time.disabled=true
+    time.sntpServerList=localhost
+    # stats
+    stat.full=true
+    stat.logFile=logs/stdout
+    stat.logFilters=
+    stat.summaries=bw.recvRate.60000,bw.sendRate.60000,router.memoryUsed.60000,router.activePeers.60000
+    # no iprestriction
+    router.inboundPool.iprestriction=0
+    router.outboundPool.iprestriction=0
+    
+    router.isHidden=false
+    i2np.ntcp.autoip=false
+    i2np.ntcp.hostname={{ .Values.i2p.ip }}
+    i2np.udp.host={{ .Values.i2p.ip }}
+
+{{- end -}}

@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-init-config
+data:
+  init-config.sh: |-
+    {{- .Files.Get .Values.i2p.initconfig.script | nindent 4 }}

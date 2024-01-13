@@ -1,0 +1,36 @@
+{{- if .Values.i2p.tunnels.enabled -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-tunnel-config
+data:
+  i2ptunnel.config: |-
+    {{- range $index, $value := .Values.i2p.tunnels.configs}}
+      tunnel.0.name={{ $value.name }}
+      tunnel.0.description={{ $value.description }}
+      tunnel.0.type={{ $value.type }}
+      {{- if .hostFromservice }}
+      tunnel.0.targetHost={{ $.Release.Name}}-{{ .hostFromService }}
+      {{- else }}
+      tunnel.0.targetHost={{ $value.host}}
+      {{- end }}
+      tunnel.0.targetPort={{ $value.port }}
+      #tunnel.0.spoofedHost=mysite.i2p
+      tunnel.0.privKeyFile={{ $value.key }}
+      #tunnel.0.i2cpHost=127.0.0.1
+      #tunnel.0.i2cpPort=7654
+      tunnel.0.option.inbound.nickname=eepsite
+      tunnel.0.option.outbound.nickname=eepsite
+      tunnel.0.option.i2cp.destination.sigType=7
+      tunnel.0.option.i2cp.leaseSetEncType=4,0
+      tunnel.0.option.inbound.length=3
+      tunnel.0.option.inbound.lengthVariance=0
+      tunnel.0.option.outbound.length=3
+      tunnel.0.option.outbound.lengthVariance=0
+      # uncomment for HTTPS to port 7668
+      #tunnel.3.option.targetForPort.443=127.0.0.1:7668
+      tunnel.0.startOnLoad=false
+      {{- end}}
+
+
+{{- end -}}

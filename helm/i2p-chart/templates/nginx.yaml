@@ -1,0 +1,56 @@
+{{- if .Values.nginx.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-nginx
+spec:
+  replicas: {{ .Values.nginx.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-nginx
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-nginx
+    spec:
+      containers:
+      - name: nginx
+        image: {{ .Values.nginx.image.repository }}:{{ .Values.nginx.image.tag }}
+        ports:
+        - containerPort: {{ .Values.nginx.service.port }}
+        volumeMounts:
+        - name: nginx-config
+          mountPath: /etc/nginx/conf.d/default.conf
+          subPath: nginx.conf
+      volumes:
+      - name: nginx-config
+        configMap:
+          name: {{ .Release.Name }}-nginx-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-nginx
+spec:
+  selector:
+    app: {{ .Release.Name }}-nginx
+  ports:
+    - protocol: TCP
+      port: {{ .Values.nginx.service.port }}
+      targetPort: {{ .Values.nginx.service.port }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-nginx-config
+data:
+  nginx.conf: |-
+    server {
+      listen {{ .Values.nginx.service.port }};
+
+      location / {
+          default_type text/html;
+          return 200 'Hello from {{ .Release.Name }}'; 
+      }
+    }
+{{- end }}

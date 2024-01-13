@@ -1,0 +1,150 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "i2p-chart.fullname" . }}
+  labels:
+    {{- include "i2p-chart.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "i2p-chart.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "i2p-chart.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "i2p-chart.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      initContainers:
+        - name: init-config
+          image: busybox
+          command:
+            - "/bin/sh"
+            - "/tmp/init-config/init-config.sh"
+          volumeMounts:
+            - name: i2p-data
+              mountPath: /i2p/.i2p
+            - name: init-config
+              mountPath: /tmp/init-config
+            {{- if .Values.i2p.routerconfig.enabled }}
+            - name: router-config
+              mountPath: /tmp/router-config
+            {{- end }}
+            {{- if .Values.i2p.loggerconfig.enabled }}
+            - name: logger-config
+              mountPath: /tmp/logger-config
+            {{- end }}
+            {{- if .Values.i2p.clientsconfig.enabled }}
+            - name: clients-config
+              mountPath: /tmp/clients.config.d
+            {{- end }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            {{- toYaml .Values.env | nindent 12 }}
+          ports:
+            - name: http-proxy
+              containerPort: 4444
+              protocol: TCP
+            - name: https-proxy
+              containerPort: 4445
+              protocol: TCP
+            - name: irc-proxy
+              containerPort: 6668
+              protocol: TCP
+            - name: i2cp
+              containerPort: 7654
+              protocol: TCP
+            - name: sam-bridge
+              containerPort: 7656
+              protocol: TCP
+            - name: console
+              containerPort: 7657
+              protocol: TCP
+            - name: i2p-site
+              containerPort: 7658
+              protocol: TCP
+            - name: smtp-proxy
+              containerPort: 7658
+              protocol: TCP
+            - name: pop-proxy
+              containerPort: 7660
+              protocol: TCP
+            - name: upnp-tcp
+              containerPort: 7652
+              protocol: TCP
+            - name: upnp-udp
+              containerPort: 7653
+              protocol: UDP
+                #- name: i2np-tcp
+                #  containerPort: 12345
+                #  protocol: TCP
+                #- name: i2np-udp
+                #  containerPort: 12345
+                #  protocol: UDP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 7657
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 7657
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - name: i2p-data
+              mountPath: /i2p/.i2p
+            - name: eepsite
+              mountPath: /i2p/.i2p/eepsite/docroot/
+      volumes:
+        - name: i2p-data
+          persistentVolumeClaim:
+            claimName: {{ include "i2p-chart.fullname" . }}-data
+        - name: init-config
+          configMap:
+            name: {{ .Release.Name }}-init-config
+        - name: eepsite
+          configMap:
+            name: {{ .Release.Name }}-eepsite
+        {{- if .Values.i2p.routerconfig.enabled }}
+        - name: router-config
+          configMap:
+            name: {{ .Release.Name }}-router-config
+        {{- end }}
+        {{- if .Values.i2p.loggerconfig.enabled }}
+        - name: logger-config
+          configMap:
+            name: {{ .Release.Name }}-logger-config
+        {{- end }}
+        {{- if .Values.i2p.clientsconfig.enabled }}
+        - name: clients-config
+          configMap:
+            name: {{ .Release.Name }}-clients-config
+        {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

@@ -132,7 +132,7 @@ See the helm values.yaml [here](./helm/i2pd-chart/values.yaml)
 You can do a simple `tcpdump` on the k3s node.
 
 ```bash
-k3s-node$ sudo tcpdump -nnni any net "123.8.0.0/16" -w traffic.pcap
+k3s-node$ sudo tcpdump -nnni any net "10.8.0.0/16" -w traffic.pcap
 ```
 
 ## How can I change the network latency / packet loss between the i2pd routers?

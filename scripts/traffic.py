@@ -6,7 +6,7 @@ import networkx as nx
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-net = ipaddress.IPv4Network("123.8.0.0/16")
+net = ipaddress.IPv4Network("10.8.0.0/16")
 
 def create_topology_graph(pcap_file):
     # Read pcap file (generator)

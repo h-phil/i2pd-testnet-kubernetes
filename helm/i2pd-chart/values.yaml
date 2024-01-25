@@ -6,8 +6,7 @@ replicaCount: 1
 
 image:
   repository: purplei2p/i2pd
-  pullPolicy: IfNotPresent
-  #pullPolicy: Always
+  pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
   tag: latest
 
